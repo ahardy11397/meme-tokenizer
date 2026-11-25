@@ -1,0 +1,67 @@
+use ../../keywords
+use ../../lexer
+
+test empty_input_test:
+    define toks1 as tokenize("")
+    assert length of toks1 == 0
+    define toks2 as tokenize("   \t  \r\n \n  ")
+    assert length of toks2 == 0
+
+test keyword_classification_test:
+    assert classify("function") == "keyword"
+    assert classify("functions") == "identifier"
+    assert classify("_fn2") == "identifier"
+    assert classify("_") == "identifier"
+    assert classify("return") == "keyword"
+    assert classify("returns") == "identifier"
+    assert classify("if") == "keyword"
+    assert classify("else") == "keyword"
+    assert classify("for") == "keyword"
+    assert classify("each") == "keyword"
+    assert classify("in") == "keyword"
+    assert classify("define") == "keyword"
+    assert classify("set") == "keyword"
+    assert classify("to") == "keyword"
+    assert classify("print") == "keyword"
+    assert classify("error") == "keyword"
+    assert classify("print error") == "keyword"
+    assert classify("record") == "keyword"
+    assert classify("test") == "keyword"
+    assert classify("assert") == "keyword"
+    assert classify("use") == "keyword"
+    assert classify("nothing") == "keyword"
+    assert classify("is") == "keyword"
+    assert classify("not") == "keyword"
+    assert classify("and") == "keyword"
+    assert classify("or") == "keyword"
+    assert classify("call") == "keyword"
+    assert classify("exit") == "keyword"
+    assert classify("with") == "keyword"
+    assert classify("from") == "keyword"
+    assert classify("of") == "keyword"
+    assert classify("the") == "keyword"
+    assert classify("value") == "keyword"
+    assert classify("empty") == "keyword"
+    assert classify("add") == "keyword"
+    assert classify("remove") == "keyword"
+    assert classify("sort") == "keyword"
+    assert classify("read") == "keyword"
+    assert classify("write") == "keyword"
+    assert classify("length") == "keyword"
+    assert classify("while") == "keyword"
+
+test keyword_vs_identifier_tokens_test:
+    define toks as tokenize("function functions _fn2 _")
+    assert length of toks == 4
+    define t0 as toks[0]
+    assert t0.kind == "keyword"
+    assert t0.value == "function"
+    define t1 as toks[1]
+    assert t1.kind == "identifier"
+    assert t1.value == "functions"
+    define t2 as toks[2]
+    assert t2.kind == "identifier"
+    assert t2.value == "_fn2"
+    define t3 as toks[3]
+    assert t3.kind == "identifier"
+    assert t3.value == "_"

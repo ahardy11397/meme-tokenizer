@@ -1,0 +1,57 @@
+use ../../lexer
+
+test greedy_multichar_operators_test:
+    define toks as tokenize("== != >= <= ->")
+    assert length of toks == 5
+    define t0 as toks[0]
+    assert t0.kind == "operator"
+    assert t0.value == "=="
+    define t1 as toks[1]
+    assert t1.kind == "operator"
+    assert t1.value == "!="
+    define t2 as toks[2]
+    assert t2.kind == "operator"
+    assert t2.value == ">="
+    define t3 as toks[3]
+    assert t3.kind == "operator"
+    assert t3.value == "<="
+    define t4 as toks[4]
+    assert t4.kind == "operator"
+    assert t4.value == "->"
+
+test greedy_vs_single_operators_test:
+    define toks1 as tokenize("->")
+    assert length of toks1 == 1
+    define t0 as toks1[0]
+    assert t0.value == "->"
+
+    define toks2 as tokenize(">=")
+    assert length of toks2 == 1
+    define t1 as toks2[0]
+    assert t1.value == ">="
+
+    define toks3 as tokenize("===")
+    assert length of toks3 == 2
+    define a0 as toks3[0]
+    assert a0.value == "=="
+    define a1 as toks3[1]
+    assert a1.value == "="
+
+test single_char_operators_test:
+    define toks as tokenize("+ - * / % < > = ( ) [ ] { } , : ; .")
+    assert length of toks == 18
+    for each tok in toks:
+        assert tok.kind == "operator"
+
+test unexpected_character_error_test:
+    define toks1 as tokenize("@")
+    assert length of toks1 == 1
+    assert token_has_error(toks1)
+    define t1 as toks1[0]
+    assert t1.kind == "error"
+
+    define toks2 as tokenize("$")
+    assert length of toks2 == 1
+    assert token_has_error(toks2)
+    define t2 as toks2[0]
+    assert t2.kind == "error"

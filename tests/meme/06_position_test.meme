@@ -1,0 +1,45 @@
+use ../../lexer
+
+test line_and_col_tracking_test:
+    define toks as tokenize("a b\nc d")
+    assert length of toks == 4
+    define t0 as toks[0]
+    assert t0.value == "a"
+    assert t0.line == 1
+    assert t0.col == 0
+    define t1 as toks[1]
+    assert t1.value == "b"
+    assert t1.line == 1
+    assert t1.col == 2
+    define t2 as toks[2]
+    assert t2.value == "c"
+    assert t2.line == 2
+    assert t2.col == 0
+    define t3 as toks[3]
+    assert t3.value == "d"
+    assert t3.line == 2
+    assert t3.col == 2
+
+test tab_col_offset_test:
+    define toks as tokenize("\ta\n\t\tb")
+    assert length of toks == 2
+    define t0 as toks[0]
+    assert t0.value == "a"
+    assert t0.line == 1
+    assert t0.col == 1
+    define t1 as toks[1]
+    assert t1.value == "b"
+    assert t1.line == 2
+    assert t1.col == 2
+
+test indentation_with_spaces_test:
+    define toks as tokenize("    return 42")
+    assert length of toks == 2
+    define t0 as toks[0]
+    assert t0.value == "return"
+    assert t0.line == 1
+    assert t0.col == 4
+    define t1 as toks[1]
+    assert t1.value == "42"
+    assert t1.line == 1
+    assert t1.col == 11

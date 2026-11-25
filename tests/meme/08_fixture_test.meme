@@ -1,0 +1,114 @@
+use ../../lexer
+
+test self_tokenize_fixture_test:
+    define snippet as "function sum(a: Int, b: Int) -> Int:\n    return a + b\n"
+    define toks as tokenize(snippet)
+    assert length of toks == 18
+
+    define t0 as toks[0]
+    assert t0.kind == "keyword"
+    assert t0.value == "function"
+    assert t0.line == 1
+    assert t0.col == 0
+
+    define t1 as toks[1]
+    assert t1.kind == "identifier"
+    assert t1.value == "sum"
+    assert t1.line == 1
+    assert t1.col == 9
+
+    define t2 as toks[2]
+    assert t2.kind == "operator"
+    assert t2.value == "("
+    assert t2.line == 1
+    assert t2.col == 12
+
+    define t3 as toks[3]
+    assert t3.kind == "identifier"
+    assert t3.value == "a"
+    assert t3.line == 1
+    assert t3.col == 13
+
+    define t4 as toks[4]
+    assert t4.kind == "operator"
+    assert t4.value == ":"
+    assert t4.line == 1
+    assert t4.col == 14
+
+    define t5 as toks[5]
+    assert t5.kind == "identifier"
+    assert t5.value == "Int"
+    assert t5.line == 1
+    assert t5.col == 16
+
+    define t6 as toks[6]
+    assert t6.kind == "operator"
+    assert t6.value == ","
+    assert t6.line == 1
+    assert t6.col == 19
+
+    define t7 as toks[7]
+    assert t7.kind == "identifier"
+    assert t7.value == "b"
+    assert t7.line == 1
+    assert t7.col == 21
+
+    define t8 as toks[8]
+    assert t8.kind == "operator"
+    assert t8.value == ":"
+    assert t8.line == 1
+    assert t8.col == 22
+
+    define t9 as toks[9]
+    assert t9.kind == "identifier"
+    assert t9.value == "Int"
+    assert t9.line == 1
+    assert t9.col == 24
+
+    define t10 as toks[10]
+    assert t10.kind == "operator"
+    assert t10.value == ")"
+    assert t10.line == 1
+    assert t10.col == 27
+
+    define t11 as toks[11]
+    assert t11.kind == "operator"
+    assert t11.value == "->"
+    assert t11.line == 1
+    assert t11.col == 29
+
+    define t12 as toks[12]
+    assert t12.kind == "identifier"
+    assert t12.value == "Int"
+    assert t12.line == 1
+    assert t12.col == 32
+
+    define t13 as toks[13]
+    assert t13.kind == "operator"
+    assert t13.value == ":"
+    assert t13.line == 1
+    assert t13.col == 35
+
+    define t14 as toks[14]
+    assert t14.kind == "keyword"
+    assert t14.value == "return"
+    assert t14.line == 2
+    assert t14.col == 4
+
+    define t15 as toks[15]
+    assert t15.kind == "identifier"
+    assert t15.value == "a"
+    assert t15.line == 2
+    assert t15.col == 11
+
+    define t16 as toks[16]
+    assert t16.kind == "operator"
+    assert t16.value == "+"
+    assert t16.line == 2
+    assert t16.col == 13
+
+    define t17 as toks[17]
+    assert t17.kind == "identifier"
+    assert t17.value == "b"
+    assert t17.line == 2
+    assert t17.col == 15

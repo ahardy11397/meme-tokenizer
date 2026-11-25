@@ -1,0 +1,31 @@
+use ../../lexer
+
+test full_line_comment_test:
+    define toks as tokenize("# this is a comment\n# second comment")
+    assert length of toks == 2
+    define t0 as toks[0]
+    assert t0.kind == "comment"
+    assert t0.value == "# this is a comment"
+    assert t0.line == 1
+    assert t0.col == 0
+    define t1 as toks[1]
+    assert t1.kind == "comment"
+    assert t1.value == "# second comment"
+    assert t1.line == 2
+    assert t1.col == 0
+
+test trailing_comment_test:
+    define toks as tokenize("define x as 1 # trailing")
+    assert length of toks == 5
+    define t4 as toks[4]
+    assert t4.kind == "comment"
+    assert t4.value == "# trailing"
+    assert t4.line == 1
+    assert t4.col == 14
+
+test comment_char_inside_string_test:
+    define toks as tokenize("\"not a # comment\"")
+    assert length of toks == 1
+    define t0 as toks[0]
+    assert t0.kind == "string"
+    assert t0.value == "\"not a # comment\""

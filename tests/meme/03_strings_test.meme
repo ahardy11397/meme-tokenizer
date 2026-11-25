@@ -1,0 +1,44 @@
+use ../../lexer
+
+test plain_and_empty_string_test:
+    define toks as tokenize("\"hello world\" \"\"")
+    assert length of toks == 2
+    define t0 as toks[0]
+    assert t0.kind == "string"
+    assert t0.value == "\"hello world\""
+    define t1 as toks[1]
+    assert t1.kind == "string"
+    assert t1.value == "\"\""
+
+test escape_sequences_test:
+    define toks1 as tokenize("\"quote: \\\" escaped\"")
+    assert length of toks1 == 1
+    define t1 as toks1[0]
+    assert t1.kind == "string"
+    assert t1.value == "\"quote: \\\" escaped\""
+
+    define toks2 as tokenize("\"backslash: \\\\ escaped\"")
+    assert length of toks2 == 1
+    define t2 as toks2[0]
+    assert t2.kind == "string"
+    assert t2.value == "\"backslash: \\\\ escaped\""
+
+    define toks3 as tokenize("\"newline: \\n escaped\"")
+    assert length of toks3 == 1
+    define t3 as toks3[0]
+    assert t3.kind == "string"
+    assert t3.value == "\"newline: \\n escaped\""
+
+test unterminated_string_test:
+    define toks as tokenize("\"unterminated string at end")
+    assert length of toks == 1
+    assert token_has_error(toks)
+    define t as toks[0]
+    assert t.kind == "error"
+
+test unterminated_string_newline_test:
+    define toks as tokenize("\"multi\nline\"")
+    assert length of toks == 1
+    assert token_has_error(toks)
+    define t as toks[0]
+    assert t.kind == "error"

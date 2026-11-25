@@ -1,0 +1,110 @@
+# main.meme - meme-tokenizer CLI router
+use keywords
+use lexer
+
+function print_usage() -> Void:
+    print "Usage: tokenizer <command> [args]"
+    print "Commands:"
+    print "  tokenize <file.meme> -o <out.json>   Write token stream as JSON to file"
+    print "  tokens <file.meme>                   Print human-readable table of tokens"
+    print "  count <file.meme>                    Print summary of tokens and line counts"
+
+function run_cli() -> Void:
+    define argc as argument count
+    if argc < 2:
+        call print_usage()
+        exit with code 1
+
+    define cmd as argument 1
+    if cmd == "tokenize":
+        if argc != 5 or argument 3 != "-o":
+            print error "Usage: tokenizer tokenize <file.meme> -o <out.json>"
+            exit with code 1
+        define in_path as argument 2
+        define out_path as argument 4
+        define tokens_opt as tokenize_file(in_path)
+        if tokens_opt is nothing:
+            print error "Error: cannot read file: ", in_path
+            exit with code 1
+        define tokens as value of tokens_opt
+        if token_has_error(tokens):
+            print error token_error_message(tokens)
+            exit with code 1
+        if out_path contains "/":
+            create directory "data"
+        write tokens as json to file out_path
+        exit with code 0
+
+    if cmd == "tokens":
+        if argc != 3:
+            print error "Usage: tokenizer tokens <file.meme>"
+            exit with code 1
+        define in_path as argument 2
+        define tokens_opt as tokenize_file(in_path)
+        if tokens_opt is nothing:
+            print error "Error: cannot read file: ", in_path
+            exit with code 1
+        define tokens as value of tokens_opt
+        if token_has_error(tokens):
+            print error token_error_message(tokens)
+            exit with code 1
+        for each tok in tokens:
+            print tok.line, tok.col, tok.kind, tok.value
+        exit with code 0
+
+    if cmd == "count":
+        if argc != 3:
+            print error "Usage: tokenizer count <file.meme>"
+            exit with code 1
+        define in_path as argument 2
+        define content_opt as read string from file in_path or else nothing
+        if content_opt is nothing:
+            print error "Error: cannot read file: ", in_path
+            exit with code 1
+        define content as value of content_opt
+        define tokens as tokenize(content)
+        if token_has_error(tokens):
+            print error token_error_message(tokens)
+            exit with code 1
+        define num_lines as 0
+        if length of string content > 0:
+            define raw_lines as split content by "\n"
+            set num_lines to length of raw_lines
+        define count_kw as 0
+        define count_id as 0
+        define count_int as 0
+        define count_float as 0
+        define count_str as 0
+        define count_op as 0
+        define count_com as 0
+        for each tok in tokens:
+            if tok.kind == "keyword":
+                set count_kw to count_kw + 1
+            else if tok.kind == "identifier":
+                set count_id to count_id + 1
+            else if tok.kind == "int":
+                set count_int to count_int + 1
+            else if tok.kind == "float":
+                set count_float to count_float + 1
+            else if tok.kind == "string":
+                set count_str to count_str + 1
+            else if tok.kind == "operator":
+                set count_op to count_op + 1
+            else if tok.kind == "comment":
+                set count_com to count_com + 1
+        print "Total tokens:", length of tokens
+        print "Total lines:", num_lines
+        print "keyword:", count_kw
+        print "identifier:", count_id
+        print "int:", count_int
+        print "float:", count_float
+        print "string:", count_str
+        print "operator:", count_op
+        print "comment:", count_com
+        exit with code 0
+
+    print error "Unknown command: ", cmd
+    call print_usage()
+    exit with code 1
+
+call run_cli()

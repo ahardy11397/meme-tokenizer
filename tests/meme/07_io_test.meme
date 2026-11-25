@@ -1,0 +1,35 @@
+use ../../lexer
+
+test missing_file_returns_nothing_test:
+    define opt as tokenize_file("tests/tmp/non_existent_file_987654.meme")
+    assert opt is nothing
+
+test tokenize_file_and_json_roundtrip_test:
+    create directory "tests/tmp"
+    define file_path as "tests/tmp/point_sample.meme"
+    define json_path as "tests/tmp/point_tokens.json"
+    write file file_path with "record Point:\n    x: Int\n"
+
+    define opt as tokenize_file(file_path)
+    assert opt is not nothing
+    define toks as value of opt
+    assert length of toks == 6
+
+    write toks as json to file json_path
+    define loaded_opt as read json records Token from file json_path or else nothing
+    assert loaded_opt is not nothing
+    define loaded_toks as value of loaded_opt
+    assert length of loaded_toks == 6
+
+    define t0 as loaded_toks[0]
+    assert t0.kind == "keyword"
+    assert t0.value == "record"
+    assert t0.line == 1
+    assert t0.col == 0
+
+    define t1 as loaded_toks[1]
+    assert t1.kind == "identifier"
+    assert t1.value == "Point"
+
+    delete file file_path
+    delete file json_path

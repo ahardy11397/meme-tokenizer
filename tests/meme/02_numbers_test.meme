@@ -1,0 +1,76 @@
+use ../../lexer
+
+test int_literals_test:
+    define toks as tokenize("42 0 1000 999999")
+    assert length of toks == 4
+    define t0 as toks[0]
+    assert t0.kind == "int"
+    assert t0.value == "42"
+    define t1 as toks[1]
+    assert t1.kind == "int"
+    assert t1.value == "0"
+    define t2 as toks[2]
+    assert t2.kind == "int"
+    assert t2.value == "1000"
+    define t3 as toks[3]
+    assert t3.kind == "int"
+    assert t3.value == "999999"
+
+test float_literals_test:
+    define toks as tokenize("3.14 0.0 123.456 99.001")
+    assert length of toks == 4
+    define t0 as toks[0]
+    assert t0.kind == "float"
+    assert t0.value == "3.14"
+    define t1 as toks[1]
+    assert t1.kind == "float"
+    assert t1.value == "0.0"
+    define t2 as toks[2]
+    assert t2.kind == "float"
+    assert t2.value == "123.456"
+    define t3 as toks[3]
+    assert t3.kind == "float"
+    assert t3.value == "99.001"
+
+test dot_rule_int_followed_by_dot_test:
+    define toks1 as tokenize("1.")
+    assert length of toks1 == 2
+    define a0 as toks1[0]
+    assert a0.kind == "int"
+    assert a0.value == "1"
+    define a1 as toks1[1]
+    assert a1.kind == "operator"
+    assert a1.value == "."
+
+    define toks2 as tokenize("1.foo")
+    assert length of toks2 == 3
+    define b0 as toks2[0]
+    assert b0.kind == "int"
+    assert b0.value == "1"
+    define b1 as toks2[1]
+    assert b1.kind == "operator"
+    assert b1.value == "."
+    define b2 as toks2[2]
+    assert b2.kind == "identifier"
+    assert b2.value == "foo"
+
+    define toks3 as tokenize(".42")
+    assert length of toks3 == 2
+    define c0 as toks3[0]
+    assert c0.kind == "operator"
+    assert c0.value == "."
+    define c1 as toks3[1]
+    assert c1.kind == "int"
+    assert c1.value == "42"
+
+    define toks4 as tokenize("3.14.15")
+    assert length of toks4 == 3
+    define d0 as toks4[0]
+    assert d0.kind == "float"
+    assert d0.value == "3.14"
+    define d1 as toks4[1]
+    assert d1.kind == "operator"
+    assert d1.value == "."
+    define d2 as toks4[2]
+    assert d2.kind == "int"
+    assert d2.value == "15"
